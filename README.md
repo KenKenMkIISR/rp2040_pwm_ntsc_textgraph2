@@ -1,18 +1,18 @@
 # NTSC Video output for Raspberry Pi Pico(Text and Graphic) (C SDK)
-Raspberry Pi Pico��PWM�o�݂͂̂�NTSC�r�f�I�o�͂�������ł��B  
-��т�񎁂̈ȉ����Q�l�ɍ쐬���܂����B  
+Raspberry Pi PicoのPWM出力のみでNTSCビデオ出力する実験です。  
+らびやん氏の以下を参考に作成しました。  
 https://gist.github.com/lovyan03/b50333fa917371bd92b4b5f2e7a67e89  
-�e�L�X�g�ƃO���t�B�b�N�̏d�ˍ��킹�o�͂��s���Ă��܂��B  
-Raspberry Pi Pico C SDK�p�ɍ쐬�������܂����B  
-## �ڑ�
-GP19�i25�ԃs���j����f���M�����o�͂���܂��B  
-�O�����h��GP19�𒼐ډf���@��̃r�f�I���͂ɐڑ����������ŉf�邱�Ƃ�����܂����AGP19�Ɖf���@��̊Ԃ�75�����x�̒�R���͂��݁A�O�����h�Ƃ̊Ԃ�560pF���x�̃R���f���T����ꂽ�ق����`����������ꍇ������悤�ł��B  
+テキストとグラフィックの重ね合わせ出力を行っています。  
+Raspberry Pi Pico C SDK用に作成し直しました。  
+## 接続
+GP19（25番ピン）から映像信号が出力されます。  
+グランドとGP19を直接映像機器のビデオ入力に接続しただけで映ることもありますが、GP19と映像機器の間に75Ω程度の抵抗をはさみ、グランドとの間に560pF程度のコンデンサを入れたほうがチラつきが減る場合があるようです。  
   
 GP19 -- 75 ohm --- Video Out  
-�@�@�@�@�@�@�@�@|  
-�@�@�@�@�@�@�@=== 560 pF  
-�@�@�@�@�@�@�@�@|  
-�@�@�@�@�@�@�@GND  
+　　　　　　　　|  
+　　　　　　　=== 560 pF  
+　　　　　　　　|  
+　　　　　　　GND  
   
 ![](picture1.jpg)  
 ![](picture2.jpg)  

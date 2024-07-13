@@ -1,8 +1,8 @@
-//@ƒeƒLƒXƒg{ƒOƒ‰ƒtƒBƒbƒNƒrƒfƒIo—Í—pƒ‰ƒCƒuƒ‰ƒŠ@by K.Tanaka
+//ã€€ãƒ†ã‚­ã‚¹ãƒˆï¼‹ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ“ãƒ‡ã‚ªå‡ºåŠ›ç”¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã€€by K.Tanaka
 
 #include "rp2040_pwm_ntsc_textgraph.h"
 
-// x,y‚ÉƒJƒ‰[”Ô†c‚Ìƒhƒbƒg‚ğ•`‰æ
+// x,yã«ã‚«ãƒ©ãƒ¼ç•ªå·cã®ãƒ‰ãƒƒãƒˆã‚’æç”»
 void g_pset(int x, int y, int c)
 {
 	if((unsigned int)x>=FRAME_WIDTH) return;
@@ -10,9 +10,9 @@ void g_pset(int x, int y, int c)
 	GVRAM[y*FRAME_WIDTH+x]=c;
 }
 
-// ‰¡m*cnƒhƒbƒg‚ÌƒLƒƒƒ‰ƒNƒ^[‚ğÀ•Wx,y‚É•\¦
-// unsigned char bmp[m*n]”z—ñ‚ÉA’Pƒ‚ÉƒJƒ‰[”Ô†‚ğ•À‚×‚é
-// ƒJƒ‰[”Ô†‚ª0‚Ì•”•ª‚Í“§–¾F‚Æ‚µ‚Äˆµ‚¤
+// æ¨ªm*ç¸¦nãƒ‰ãƒƒãƒˆã®ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’åº§æ¨™x,yã«è¡¨ç¤º
+// unsigned char bmp[m*n]é…åˆ—ã«ã€å˜ç´”ã«ã‚«ãƒ©ãƒ¼ç•ªå·ã‚’ä¸¦ã¹ã‚‹
+// ã‚«ãƒ©ãƒ¼ç•ªå·ãŒ0ã®éƒ¨åˆ†ã¯é€æ˜è‰²ã¨ã—ã¦æ‰±ã†
 void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 {
 	int i,j,k;
@@ -20,8 +20,8 @@ void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 	const unsigned char *p;
 	unsigned short *vph;
 
-	if(x<=-m || x>X_RES || y<=-n || y>=Y_RES) return; //‰æ–ÊŠO
-	if(y<0){ //‰æ–Êã•”‚ÉØ‚ê‚éê‡
+	if(x<=-m || x>X_RES || y<=-n || y>=Y_RES) return; //ç”»é¢å¤–
+	if(y<0){ //ç”»é¢ä¸Šéƒ¨ã«åˆ‡ã‚Œã‚‹å ´åˆ
 		i=0;
 		p=bmp-y*m;
 	}
@@ -30,8 +30,8 @@ void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 		p=bmp;
 	}
 	for(;i<y+n;i++){
-		if(i>=Y_RES) return; //‰æ–Ê‰º•”‚ÉØ‚ê‚éê‡
-		if(x<0){ //‰æ–Ê¶‚ÉØ‚ê‚éê‡‚Íc‚é•”•ª‚Ì‚İ•`‰æ
+		if(i>=Y_RES) return; //ç”»é¢ä¸‹éƒ¨ã«åˆ‡ã‚Œã‚‹å ´åˆ
+		if(x<0){ //ç”»é¢å·¦ã«åˆ‡ã‚Œã‚‹å ´åˆã¯æ®‹ã‚‹éƒ¨åˆ†ã®ã¿æç”»
 			j=0;
 			p+=-x;
 			vp=GVRAM+i*X_RES;
@@ -41,11 +41,11 @@ void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 			vp=GVRAM+i*X_RES+x;
 		}
 		for(;j<x+m;j++){
-			if(j>=X_RES){ //‰æ–Ê‰E‚ÉØ‚ê‚éê‡
+			if(j>=X_RES){ //ç”»é¢å³ã«åˆ‡ã‚Œã‚‹å ´åˆ
 				p+=x+m-j;
 				break;
 			}
-			if(*p!=0){ //ƒJƒ‰[”Ô†‚ª0‚Ìê‡A“§–¾‚Æ‚µ‚Äˆ—
+			if(*p!=0){ //ã‚«ãƒ©ãƒ¼ç•ªå·ãŒ0ã®å ´åˆã€é€æ˜ã¨ã—ã¦å‡¦ç†
 				*vp=*p;
 			}
 			p++;
@@ -54,24 +54,24 @@ void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 	}
 }
 
-// cm*‰¡nƒhƒbƒg‚ÌƒLƒƒƒ‰ƒNƒ^[Á‹
-// ƒJƒ‰[0‚Å“h‚è‚Â‚Ô‚µ
+// ç¸¦m*æ¨ªnãƒ‰ãƒƒãƒˆã®ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼æ¶ˆå»
+// ã‚«ãƒ©ãƒ¼0ã§å¡—ã‚Šã¤ã¶ã—
 void g_clrbmpmn(int x,int y,char m,char n)
 {
 	int i,j,k;
 	unsigned char *vp;
 	unsigned short mask,*vph;
 
-	if(x<=-m || x>=X_RES || y<=-n || y>=Y_RES) return; //‰æ–ÊŠO
-	if(y<0){ //‰æ–Êã•”‚ÉØ‚ê‚éê‡
+	if(x<=-m || x>=X_RES || y<=-n || y>=Y_RES) return; //ç”»é¢å¤–
+	if(y<0){ //ç”»é¢ä¸Šéƒ¨ã«åˆ‡ã‚Œã‚‹å ´åˆ
 		i=0;
 	}
 	else{
 		i=y;
 	}
 	for(;i<y+n;i++){
-		if(i>=Y_RES) return; //‰æ–Ê‰º•”‚ÉØ‚ê‚éê‡
-		if(x<0){ //‰æ–Ê¶‚ÉØ‚ê‚éê‡‚Íc‚é•”•ª‚Ì‚İ•`‰æ
+		if(i>=Y_RES) return; //ç”»é¢ä¸‹éƒ¨ã«åˆ‡ã‚Œã‚‹å ´åˆ
+		if(x<0){ //ç”»é¢å·¦ã«åˆ‡ã‚Œã‚‹å ´åˆã¯æ®‹ã‚‹éƒ¨åˆ†ã®ã¿æç”»
 			j=0;
 			vp=GVRAM+i*X_RES;
 		}
@@ -80,7 +80,7 @@ void g_clrbmpmn(int x,int y,char m,char n)
 			vp=GVRAM+i*X_RES+x;
 		}
 		for(;j<x+m;j++){
-			if(j>=X_RES){ //‰æ–Ê‰E‚ÉØ‚ê‚éê‡
+			if(j>=X_RES){ //ç”»é¢å³ã«åˆ‡ã‚Œã‚‹å ´åˆ
 				break;
 			}
 			*vp++=0;
@@ -88,7 +88,7 @@ void g_clrbmpmn(int x,int y,char m,char n)
 	}
 }
 
-// (x1,y1)-(x2,y2)‚ÉƒJƒ‰[c‚Åü•ª‚ğ•`‰æ
+// (x1,y1)-(x2,y2)ã«ã‚«ãƒ©ãƒ¼cã§ç·šåˆ†ã‚’æç”»
 void g_gline(int x1,int y1,int x2,int y2,unsigned int c)
 {
 	int sx,sy,dx,dy,i;
@@ -136,7 +136,7 @@ void g_gline(int x1,int y1,int x2,int y2,unsigned int c)
 	}
 }
 
-// (x0,y0)‚ğ’†S‚ÉA”¼ŒarAƒJƒ‰[c‚Ì‰~‚ğ•`‰æ
+// (x0,y0)ã‚’ä¸­å¿ƒã«ã€åŠå¾„rã€ã‚«ãƒ©ãƒ¼cã®å††ã‚’æç”»
 void g_circle(int x0,int y0,unsigned int r,unsigned int c)
 {
 	int x,y,f;
@@ -161,7 +161,7 @@ void g_circle(int x0,int y0,unsigned int r,unsigned int c)
 	}
 }
 
-// (x1,y)-(x2,y)‚Ì…•½ƒ‰ƒCƒ“‚ğƒJƒ‰[c‚Å‚‘¬•`‰æ
+// (x1,y)-(x2,y)ã®æ°´å¹³ãƒ©ã‚¤ãƒ³ã‚’ã‚«ãƒ©ãƒ¼cã§é«˜é€Ÿæç”»
 void g_hline(int x1,int x2,int y,unsigned int c)
 {
 	int temp;
@@ -190,7 +190,7 @@ void g_hline(int x1,int x2,int y,unsigned int c)
 	while(x1<=x2) g_pset(x1++,y,c);
 }
 
-// (x1,y1),(x2,y2)‚ğ‘ÎŠpü‚Æ‚·‚éƒJƒ‰[c‚Å“h‚ç‚ê‚½’·•ûŒ`‚ğ•`‰æ
+// (x1,y1),(x2,y2)ã‚’å¯¾è§’ç·šã¨ã™ã‚‹ã‚«ãƒ©ãƒ¼cã§å¡—ã‚‰ã‚ŒãŸé•·æ–¹å½¢ã‚’æç”»
 void g_boxfill(int x1,int y1,int x2,int y2,unsigned int c)
 {
 	int temp;
@@ -214,7 +214,7 @@ void g_boxfill(int x1,int y1,int x2,int y2,unsigned int c)
 	}
 }
 
-// (x0,y0)‚ğ’†S‚ÉA”¼ŒarAƒJƒ‰[c‚Å“h‚ç‚ê‚½‰~‚ğ•`‰æ
+// (x0,y0)ã‚’ä¸­å¿ƒã«ã€åŠå¾„rã€ã‚«ãƒ©ãƒ¼cã§å¡—ã‚‰ã‚ŒãŸå††ã‚’æç”»
 void g_circlefill(int x0,int y0,unsigned int r,unsigned int c)
 {
 	int x,y,f;
@@ -235,10 +235,10 @@ void g_circlefill(int x0,int y0,unsigned int r,unsigned int c)
 	}
 }
 
-//8*8ƒhƒbƒg‚ÌƒAƒ‹ƒtƒ@ƒxƒbƒgƒtƒHƒ“ƒg•\¦
-//À•Wix,y)AƒJƒ‰[”Ô†c
-//bc:ƒoƒbƒNƒOƒ‰ƒ“ƒhƒJƒ‰[A•‰”‚Ìê‡–³‹
-//n:•¶š”Ô†
+//8*8ãƒ‰ãƒƒãƒˆã®ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆãƒ•ã‚©ãƒ³ãƒˆè¡¨ç¤º
+//åº§æ¨™ï¼ˆx,y)ã€ã‚«ãƒ©ãƒ¼ç•ªå·c
+//bc:ãƒãƒƒã‚¯ã‚°ãƒ©ãƒ³ãƒ‰ã‚«ãƒ©ãƒ¼ã€è² æ•°ã®å ´åˆç„¡è¦–
+//n:æ–‡å­—ç•ªå·
 void g_putfont(int x,int y,unsigned int c,int bc,unsigned char n)
 {
 	int i,j,k;
@@ -258,7 +258,7 @@ void g_putfont(int x,int y,unsigned int c,int bc,unsigned char n)
 	}
 }
 
-//À•W(x,y)‚©‚çƒJƒ‰[”Ô†c‚Å•¶š—ñs‚ğ•\¦Abc:ƒoƒbƒNƒOƒ‰ƒ“ƒhƒJƒ‰[
+//åº§æ¨™(x,y)ã‹ã‚‰ã‚«ãƒ©ãƒ¼ç•ªå·cã§æ–‡å­—åˆ—sã‚’è¡¨ç¤ºã€bc:ãƒãƒƒã‚¯ã‚°ãƒ©ãƒ³ãƒ‰ã‚«ãƒ©ãƒ¼
 void g_printstr(int x,int y,unsigned int c,int bc,unsigned char *s){
 	while(*s){
 		g_putfont(x,y,c,bc,*s++);
@@ -266,7 +266,7 @@ void g_printstr(int x,int y,unsigned int c,int bc,unsigned char *s){
 	}
 }
 
-//À•W(x,y)‚ÉƒJƒ‰[”Ô†c‚Å”’ln‚ğ•\¦Abc:ƒoƒbƒNƒOƒ‰ƒ“ƒhƒJƒ‰[
+//åº§æ¨™(x,y)ã«ã‚«ãƒ©ãƒ¼ç•ªå·cã§æ•°å€¤nã‚’è¡¨ç¤ºã€bc:ãƒãƒƒã‚¯ã‚°ãƒ©ãƒ³ãƒ‰ã‚«ãƒ©ãƒ¼
 void g_printnum(int x,int y,unsigned char c,int bc,unsigned int n){
 	unsigned int d,e;
 	d=10;
@@ -284,7 +284,7 @@ void g_printnum(int x,int y,unsigned char c,int bc,unsigned int n){
 	}while(n!=0);
 }
 
-//À•W(x,y)‚ÉƒJƒ‰[”Ô†c‚Å”’ln‚ğ•\¦Abc:ƒoƒbƒNƒOƒ‰ƒ“ƒhƒJƒ‰[AeŒ…‚Å•\¦
+//åº§æ¨™(x,y)ã«ã‚«ãƒ©ãƒ¼ç•ªå·cã§æ•°å€¤nã‚’è¡¨ç¤ºã€bc:ãƒãƒƒã‚¯ã‚°ãƒ©ãƒ³ãƒ‰ã‚«ãƒ©ãƒ¼ã€eæ¡ã§è¡¨ç¤º
 void g_printnum2(int x,int y,unsigned char c,int bc,unsigned int n,unsigned char e){
 	if(e==0) return;
 	x+=(e-1)*8;
@@ -301,7 +301,7 @@ void g_printnum2(int x,int y,unsigned char c,int bc,unsigned int n,unsigned char
 	}
 }
 
-//À•W(x,y)‚ÌVRAMã‚ÌŒ»İ‚ÌƒpƒŒƒbƒg”Ô†‚ğ•Ô‚·A‰æ–ÊŠO‚Í0‚ğ•Ô‚·
+//åº§æ¨™(x,y)ã®VRAMä¸Šã®ç¾åœ¨ã®ãƒ‘ãƒ¬ãƒƒãƒˆç•ªå·ã‚’è¿”ã™ã€ç”»é¢å¤–ã¯0ã‚’è¿”ã™
 unsigned int g_color(int x,int y){
 	unsigned short *ad;
 
@@ -329,20 +329,20 @@ void vramscroll(void){
 	}
 }
 
-//ƒJ[ƒ\ƒ‹‚ğÀ•W(x,y)‚ÉƒJƒ‰[”Ô†c‚Éİ’è
+//ã‚«ãƒ¼ã‚½ãƒ«ã‚’åº§æ¨™(x,y)ã«ã‚«ãƒ©ãƒ¼ç•ªå·cã«è¨­å®š
 void setcursor(unsigned char x,unsigned char y,unsigned char c){
 	if(x>=WIDTH_X || y>=WIDTH_Y) return;
 	cursor=TVRAM+y*WIDTH_X+x;
 	cursorcolor=c;
 }
 
-//ƒJ[ƒ\ƒ‹ˆÊ’u‚»‚Ì‚Ü‚Ü‚ÅƒJƒ‰[”Ô†‚ğc‚Éİ’è
+//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ãã®ã¾ã¾ã§ã‚«ãƒ©ãƒ¼ç•ªå·ã‚’cã«è¨­å®š
 void setcursorcolor(unsigned char c){
 	cursorcolor=c;
 }
 
-//ƒJ[ƒ\ƒ‹ˆÊ’u‚ÉƒeƒLƒXƒgƒR[ƒhn‚ğ1•¶š•\¦‚µAƒJ[ƒ\ƒ‹‚ğ1•¶ši‚ß‚é
-//‰æ–ÊÅI•¶š•\¦‚µ‚Ä‚àƒXƒNƒ[ƒ‹‚¹‚¸AŸ‚Ì•¶š•\¦‚ÉƒXƒNƒ[ƒ‹‚·‚é
+//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«ãƒ†ã‚­ã‚¹ãƒˆã‚³ãƒ¼ãƒ‰nã‚’1æ–‡å­—è¡¨ç¤ºã—ã€ã‚«ãƒ¼ã‚½ãƒ«ã‚’1æ–‡å­—é€²ã‚ã‚‹
+//ç”»é¢æœ€çµ‚æ–‡å­—è¡¨ç¤ºã—ã¦ã‚‚ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã›ãšã€æ¬¡ã®æ–‡å­—è¡¨ç¤ºæ™‚ã«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹
 void printchar(unsigned char n){
 	if(cursor<TVRAM || cursor>TVRAM+WIDTH_X*WIDTH_Y) return;
 	if(cursor==TVRAM+WIDTH_X*WIDTH_Y){
@@ -350,7 +350,7 @@ void printchar(unsigned char n){
 		cursor-=WIDTH_X;
 	}
 	if(n=='\n'){
-		//‰üs
+		//æ”¹è¡Œ
 		cursor+=WIDTH_X-((cursor-TVRAM)%WIDTH_X);
 	} else if(n==0x08){
 		//BS
@@ -362,14 +362,14 @@ void printchar(unsigned char n){
 	}
 }
 
-//ƒJ[ƒ\ƒ‹ˆÊ’u‚É•¶š—ñs‚ğ•\¦
+//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«æ–‡å­—åˆ—sã‚’è¡¨ç¤º
 void printstr(unsigned char *s){
 	while(*s){
 		printchar(*s++);
 	}
 }
 
-//ƒJ[ƒ\ƒ‹ˆÊ’u‚É•„†‚È‚µ®”n‚ğ10i”•\¦
+//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«ç¬¦å·ãªã—æ•´æ•°nã‚’10é€²æ•°è¡¨ç¤º
 void printnum(unsigned int n){
 	unsigned int d,n1;
 	n1=n/10;
@@ -384,7 +384,7 @@ void printnum(unsigned int n){
 	}
 }
 
-//ƒJ[ƒ\ƒ‹ˆÊ’u‚É•„†‚È‚µ®”n‚ğeŒ…‚Ì10i”•\¦i‘O‚Ì‹ó‚«Œ…•”•ª‚ÍƒXƒy[ƒX‚Å–„‚ß‚éj
+//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«ç¬¦å·ãªã—æ•´æ•°nã‚’eæ¡ã®10é€²æ•°è¡¨ç¤ºï¼ˆå‰ã®ç©ºãæ¡éƒ¨åˆ†ã¯ã‚¹ãƒšãƒ¼ã‚¹ã§åŸ‹ã‚ã‚‹ï¼‰
 void printnum2(unsigned int n,unsigned char e){
 	unsigned int d,n1;
 	if(e==0) return;
@@ -404,7 +404,7 @@ void printnum2(unsigned int n,unsigned char e){
 	}
 }
 
-//ƒeƒLƒXƒg‰æ–Ê‚ğ0‚ÅƒNƒŠƒA‚µAƒJ[ƒ\ƒ‹‚ğ‰æ–Êæ“ª‚ÉˆÚ“®
+//ãƒ†ã‚­ã‚¹ãƒˆç”»é¢ã‚’0ã§ã‚¯ãƒªã‚¢ã—ã€ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç”»é¢å…ˆé ­ã«ç§»å‹•
 void cls(void){
 	clearscreen();
 	cursor=TVRAM;

@@ -23,6 +23,7 @@
 void g_clearscreen(void);
 void clearscreen(void);
 void rp2040_pwm_ntsc_init(void);
+void set_palette(unsigned char c,unsigned char b,unsigned char r,unsigned char g);
 
 extern volatile uint16_t drawcount;
 extern uint8_t TVRAM[];

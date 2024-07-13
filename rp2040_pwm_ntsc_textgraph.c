@@ -42,7 +42,8 @@ SOFTWARE.
 uint8_t TVRAM[ATTROFFSET*2+1];
 uint8_t framebuffer[FRAME_WIDTH * FRAME_HEIGHT] __attribute__ ((aligned (4)));
 
-volatile uint16_t drawcount=0;
+volatile uint8_t drawing; //　映像区間処理中は-1、その他は0
+volatile uint16_t drawcount=0; //　1画面表示終了ごとに1足す。アプリ側で0にする。
 
 // DMAピンポンバッファ
 uint16_t dma_buffer[2][(NUM_LINE_SAMPLES+3)&~3u] __attribute__ ((aligned (4)));
@@ -85,6 +86,7 @@ static void makeDmaBuffer(uint16_t* buf, size_t line_num)
 			fbp = framebuffer;
 			tvp = TVRAM;
 			tline = 0;
+			drawing = -1;
 		}
 		for(int i=0;i<WIDTH_X;i++)
 		{
@@ -120,12 +122,16 @@ static void makeDmaBuffer(uint16_t* buf, size_t line_num)
 	}
 	else if(line_num==V_SYNC+V_PREEQ+FRAME_HEIGHT || line_num==V_SYNC+V_PREEQ+FRAME_HEIGHT+1)
 	{
+		if(line_num==V_SYNC+V_PREEQ+FRAME_HEIGHT){
+			drawing=0;
+			drawcount++;
+		}
 		b+=H_PICTURE;
 		for(int i=0;i<FRAME_WIDTH*2;i++) *b++ = 2;
 	}
 }
 
-static void set_palette(unsigned char c,unsigned char b,unsigned char r,unsigned char g)
+void set_palette(unsigned char c,unsigned char b,unsigned char r,unsigned char g)
 {
 	// カラーパレット設定
 	// c:パレット番号0-255、r,g,b:0-255
@@ -184,7 +190,6 @@ static void irq_handler(void) {
 	makeDmaBuffer(dma_buffer[flip], scanline);
 	if (++scanline >= NUM_LINES) {
 		scanline = 0;
-		drawcount++;
 	}
 #if defined ( PIN_DEBUG_BUSY )
 	gpio_put(PIN_DEBUG_BUSY, 0);
