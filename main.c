@@ -24,7 +24,7 @@ void demo(void)
 	  cls();
 	}
 	setcursor(0, 0, 7);
-	printnum(counter);
+	printnum(counter-100+1);
 	g_gline((rand()&255), (rand()&255), (rand()&255)+100, (rand()&255), (rand()&15)+1);
   }
   else if(counter<300){

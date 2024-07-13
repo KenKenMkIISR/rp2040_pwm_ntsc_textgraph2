@@ -2,17 +2,18 @@
 
 #include "rp2040_pwm_ntsc_textgraph.h"
 
+// x,yにカラー番号cのドットを描画
 void g_pset(int x, int y, int c)
 {
-  if((unsigned int)x>=FRAME_WIDTH) return;
-  if((unsigned int)y>=FRAME_HEIGHT) return;
-  GVRAM[y*FRAME_WIDTH+x]=c;
+	if((unsigned int)x>=FRAME_WIDTH) return;
+	if((unsigned int)y>=FRAME_HEIGHT) return;
+	GVRAM[y*FRAME_WIDTH+x]=c;
 }
 
-void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 // 横m*縦nドットのキャラクターを座標x,yに表示
 // unsigned char bmp[m*n]配列に、単純にカラー番号を並べる
 // カラー番号が0の部分は透明色として扱う
+void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 {
 	int i,j,k;
 	unsigned char *vp;
@@ -53,9 +54,9 @@ void g_putbmpmn(int x,int y,char m,char n,const unsigned char bmp[])
 	}
 }
 
-void g_clrbmpmn(int x,int y,char m,char n)
 // 縦m*横nドットのキャラクター消去
 // カラー0で塗りつぶし
+void g_clrbmpmn(int x,int y,char m,char n)
 {
 	int i,j,k;
 	unsigned char *vp;
@@ -87,8 +88,8 @@ void g_clrbmpmn(int x,int y,char m,char n)
 	}
 }
 
-void g_gline(int x1,int y1,int x2,int y2,unsigned int c)
 // (x1,y1)-(x2,y2)にカラーcで線分を描画
+void g_gline(int x1,int y1,int x2,int y2,unsigned int c)
 {
 	int sx,sy,dx,dy,i;
 	int e;
@@ -134,8 +135,9 @@ void g_gline(int x1,int y1,int x2,int y2,unsigned int c)
 		}
 	}
 }
-void g_circle(int x0,int y0,unsigned int r,unsigned int c)
+
 // (x0,y0)を中心に、半径r、カラーcの円を描画
+void g_circle(int x0,int y0,unsigned int r,unsigned int c)
 {
 	int x,y,f;
 	x=r;
@@ -158,8 +160,9 @@ void g_circle(int x0,int y0,unsigned int r,unsigned int c)
 		f+=y*4+2;
 	}
 }
-void g_hline(int x1,int x2,int y,unsigned int c)
+
 // (x1,y)-(x2,y)の水平ラインをカラーcで高速描画
+void g_hline(int x1,int x2,int y,unsigned int c)
 {
 	int temp;
 	unsigned int d,*ad;
@@ -187,8 +190,8 @@ void g_hline(int x1,int x2,int y,unsigned int c)
 	while(x1<=x2) g_pset(x1++,y,c);
 }
 
-void g_boxfill(int x1,int y1,int x2,int y2,unsigned int c)
 // (x1,y1),(x2,y2)を対角線とするカラーcで塗られた長方形を描画
+void g_boxfill(int x1,int y1,int x2,int y2,unsigned int c)
 {
 	int temp;
 
@@ -210,8 +213,9 @@ void g_boxfill(int x1,int y1,int x2,int y2,unsigned int c)
 		g_hline(x1,x2,y1++,c);
 	}
 }
-void g_circlefill(int x0,int y0,unsigned int r,unsigned int c)
+
 // (x0,y0)を中心に、半径r、カラーcで塗られた円を描画
+void g_circlefill(int x0,int y0,unsigned int r,unsigned int c)
 {
 	int x,y,f;
 	x=r;
@@ -230,11 +234,12 @@ void g_circlefill(int x0,int y0,unsigned int r,unsigned int c)
 		f+=y*4+2;
 	}
 }
-void g_putfont(int x,int y,unsigned int c,int bc,unsigned char n)
+
 //8*8ドットのアルファベットフォント表示
 //座標（x,y)、カラー番号c
 //bc:バックグランドカラー、負数の場合無視
 //n:文字番号
+void g_putfont(int x,int y,unsigned int c,int bc,unsigned char n)
 {
 	int i,j,k;
 	unsigned char d;
@@ -253,15 +258,16 @@ void g_putfont(int x,int y,unsigned int c,int bc,unsigned char n)
 	}
 }
 
+//座標(x,y)からカラー番号cで文字列sを表示、bc:バックグランドカラー
 void g_printstr(int x,int y,unsigned int c,int bc,unsigned char *s){
-	//座標(x,y)からカラー番号cで文字列sを表示、bc:バックグランドカラー
 	while(*s){
 		g_putfont(x,y,c,bc,*s++);
 		x+=8;
 	}
 }
+
+//座標(x,y)にカラー番号cで数値nを表示、bc:バックグランドカラー
 void g_printnum(int x,int y,unsigned char c,int bc,unsigned int n){
-	//座標(x,y)にカラー番号cで数値nを表示、bc:バックグランドカラー
 	unsigned int d,e;
 	d=10;
 	e=0;
@@ -277,8 +283,9 @@ void g_printnum(int x,int y,unsigned char c,int bc,unsigned int n){
 		x-=8;
 	}while(n!=0);
 }
+
+//座標(x,y)にカラー番号cで数値nを表示、bc:バックグランドカラー、e桁で表示
 void g_printnum2(int x,int y,unsigned char c,int bc,unsigned int n,unsigned char e){
-	//座標(x,y)にカラー番号cで数値nを表示、bc:バックグランドカラー、e桁で表示
 	if(e==0) return;
 	x+=(e-1)*8;
 	do{
@@ -293,8 +300,9 @@ void g_printnum2(int x,int y,unsigned char c,int bc,unsigned int n,unsigned char
 		e--;
 	}
 }
+
+//座標(x,y)のVRAM上の現在のパレット番号を返す、画面外は0を返す
 unsigned int g_color(int x,int y){
-	//座標(x,y)のVRAM上の現在のパレット番号を返す、画面外は0を返す
 	unsigned short *ad;
 
 	if((unsigned int)x>=(unsigned int)X_RES) return 0;
@@ -320,19 +328,22 @@ void vramscroll(void){
 		*p1++=0;
 	}
 }
+
+//カーソルを座標(x,y)にカラー番号cに設定
 void setcursor(unsigned char x,unsigned char y,unsigned char c){
-	//カーソルを座標(x,y)にカラー番号cに設定
 	if(x>=WIDTH_X || y>=WIDTH_Y) return;
 	cursor=TVRAM+y*WIDTH_X+x;
 	cursorcolor=c;
 }
+
+//カーソル位置そのままでカラー番号をcに設定
 void setcursorcolor(unsigned char c){
-	//カーソル位置そのままでカラー番号をcに設定
 	cursorcolor=c;
 }
+
+//カーソル位置にテキストコードnを1文字表示し、カーソルを1文字進める
+//画面最終文字表示してもスクロールせず、次の文字表示時にスクロールする
 void printchar(unsigned char n){
-	//カーソル位置にテキストコードnを1文字表示し、カーソルを1文字進める
-	//画面最終文字表示してもスクロールせず、次の文字表示時にスクロールする
 	if(cursor<TVRAM || cursor>TVRAM+WIDTH_X*WIDTH_Y) return;
 	if(cursor==TVRAM+WIDTH_X*WIDTH_Y){
 		vramscroll();
@@ -350,14 +361,16 @@ void printchar(unsigned char n){
 		cursor++;
 	}
 }
+
+//カーソル位置に文字列sを表示
 void printstr(unsigned char *s){
-	//カーソル位置に文字列sを表示
 	while(*s){
 		printchar(*s++);
 	}
 }
+
+//カーソル位置に符号なし整数nを10進数表示
 void printnum(unsigned int n){
-	//カーソル位置に符号なし整数nを10進数表示
 	unsigned int d,n1;
 	n1=n/10;
 	d=1;
@@ -370,8 +383,9 @@ void printnum(unsigned int n){
 		d/=10;
 	}
 }
+
+//カーソル位置に符号なし整数nをe桁の10進数表示（前の空き桁部分はスペースで埋める）
 void printnum2(unsigned int n,unsigned char e){
-	//カーソル位置に符号なし整数nをe桁の10進数表示（前の空き桁部分はスペースで埋める）
 	unsigned int d,n1;
 	if(e==0) return;
 	n1=n/10;
@@ -390,8 +404,8 @@ void printnum2(unsigned int n,unsigned char e){
 	}
 }
 
+//テキスト画面を0でクリアし、カーソルを画面先頭に移動
 void cls(void){
-	//テキスト画面を0でクリアし、カーソルを画面先頭に移動
 	clearscreen();
 	cursor=TVRAM;
 }

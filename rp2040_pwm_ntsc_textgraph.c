@@ -54,75 +54,75 @@ static uint pwm_dma_chan;
 
 static void makeDmaBuffer(uint16_t* buf, size_t line_num)
 {
-  static uint8_t* fbp = framebuffer;
-  static uint8_t* tvp = TVRAM;
-  static uint8_t tline = 0;
-  uint16_t* b = buf;
+	static uint8_t* fbp = framebuffer;
+	static uint8_t* tvp = TVRAM;
+	static uint8_t tline = 0;
+	uint16_t* b = buf;
 
-  if (line_num < 2)
-  {
-	for (int j = 0; j < NUM_LINE_SAMPLES-H_SYNC; j++) *b++ = 0;
-	while (b < buf + NUM_LINE_SAMPLES) *b++ = 2;
-  }
-  else if(line_num==V_SYNC || line_num==V_SYNC+1)
-  {
-	for (int j = 0; j < H_SYNC; j++) *b++ = 0;
-	for (int j = 0; j < 8; j++) *b++ = 2;
-	for (int j = 0; j < 9; j++)
+	if (line_num < 2)
 	{
-	  *b++=1;
-	  *b++=2;
-	  *b++=3;
-	  *b++=2;
+		for (int j = 0; j < NUM_LINE_SAMPLES-H_SYNC; j++) *b++ = 0;
+		while (b < buf + NUM_LINE_SAMPLES) *b++ = 2;
 	}
-	while (b < buf + NUM_LINE_SAMPLES) *b++ = 2;
-  }
-  else if(line_num>=V_SYNC+V_PREEQ && line_num<V_SYNC+V_PREEQ+FRAME_HEIGHT)
-  {
-	b+=H_PICTURE;
-	if (line_num == V_SYNC + V_PREEQ)
+		else if(line_num==V_SYNC || line_num==V_SYNC+1)
 	{
-	  fbp = framebuffer;
-	  tvp = TVRAM;
-	  tline = 0;
+		for (int j = 0; j < H_SYNC; j++) *b++ = 0;
+		for (int j = 0; j < 8; j++) *b++ = 2;
+		for (int j = 0; j < 9; j++)
+		{
+			*b++=1;
+			*b++=2;
+			*b++=3;
+			*b++=2;
+		}
+		while (b < buf + NUM_LINE_SAMPLES) *b++ = 2;
 	}
-	for(int i=0;i<WIDTH_X;i++)
+	else if(line_num>=V_SYNC+V_PREEQ && line_num<V_SYNC+V_PREEQ+FRAME_HEIGHT)
 	{
-	  uint8_t d=FontData[*tvp *8 +tline];
-	  uint16_t* clp=color_tbl+(*(tvp+ATTROFFSET))*4;
-	  uint32_t c1=*((uint32_t*)clp);
-	  uint32_t c2=*((uint32_t*)(clp+2));
-	  for(int j=0;j<4;j++)
-	  {
-		uint16_t t=*(uint16_t*)fbp;
-		if(d & 0x80){
-		  *((uint32_t*)b)=c1;
+		b+=H_PICTURE;
+		if (line_num == V_SYNC + V_PREEQ)
+		{
+			fbp = framebuffer;
+			tvp = TVRAM;
+			tline = 0;
 		}
-		else{
-		  *((uint32_t*)b)=*((uint32_t*)(color_tbl+(t & 0xff)*4));
+		for(int i=0;i<WIDTH_X;i++)
+		{
+			uint8_t d=FontData[*tvp *8 +tline];
+			uint16_t* clp=color_tbl+(*(tvp+ATTROFFSET))*4;
+			uint32_t c1=*((uint32_t*)clp);
+			uint32_t c2=*((uint32_t*)(clp+2));
+			for(int j=0;j<4;j++)
+			{
+			uint16_t t=*(uint16_t*)fbp;
+			if(d & 0x80){
+				*((uint32_t*)b)=c1;
+			}
+			else{
+				*((uint32_t*)b)=*((uint32_t*)(color_tbl+(t & 0xff)*4));
+			}
+			b+=2;
+			if(d & 0x40){
+				*((uint32_t*)b)=c2;
+			}
+			else{
+				*((uint32_t*)b)=*((uint32_t*)(color_tbl+(t >> 8)*4+2));
+			}
+			b+=2;
+			fbp+=2;
+			d<<=2;
+			}
+			tvp++;
 		}
-		b+=2;
-		if(d & 0x40){
-		  *((uint32_t*)b)=c2;
-		}
-		else{
-		  *((uint32_t*)b)=*((uint32_t*)(color_tbl+(t >> 8)*4+2));
-		}
-		b+=2;
-		fbp+=2;
-		d<<=2;
-	  }
-	  tvp++;
+		tline++;
+		if(tline<8) tvp-=WIDTH_X;
+		else tline=0;
 	}
-	tline++;
-	if(tline<8) tvp-=WIDTH_X;
-	else tline=0;
-  }
-  else if(line_num==V_SYNC+V_PREEQ+FRAME_HEIGHT || line_num==V_SYNC+V_PREEQ+FRAME_HEIGHT+1)
-  {
-	b+=H_PICTURE;
-	for(int i=0;i<FRAME_WIDTH*2;i++) *b++ = 2;
-  }
+	else if(line_num==V_SYNC+V_PREEQ+FRAME_HEIGHT || line_num==V_SYNC+V_PREEQ+FRAME_HEIGHT+1)
+	{
+		b+=H_PICTURE;
+		for(int i=0;i<FRAME_WIDTH*2;i++) *b++ = 2;
+	}
 }
 
 static void set_palette(unsigned char c,unsigned char b,unsigned char r,unsigned char g)
@@ -152,8 +152,8 @@ static void set_palette(unsigned char c,unsigned char b,unsigned char r,unsigned
 	saturation = saturation * satuation_base;
 	for (int j = 0; j < 4; j++)
 	{
-	int tmp = ((int)(128.5f + y + sinf(phase_offset + (float)M_PI / 2 * j) * saturation)) >> 8;
-	color_tbl[c*4+j] = tmp < 0 ? 0 : (tmp > 255 ? 255 : tmp);
+		int tmp = ((int)(128.5f + y + sinf(phase_offset + (float)M_PI / 2 * j) * saturation)) >> 8;
+		color_tbl[c*4+j] = tmp < 0 ? 0 : (tmp > 255 ? 255 : tmp);
 	}
 }
 
@@ -172,22 +172,22 @@ static void init_palette(void){
 }
 
 static void irq_handler(void) {
-  static bool flip = false;
-  static size_t scanline = 0;
-  dma_channel_set_read_addr(pwm_dma_chan, dma_buffer[flip], true);
-  dma_hw->ints0 = 1u << pwm_dma_chan;	
+	static bool flip = false;
+	static size_t scanline = 0;
+	dma_channel_set_read_addr(pwm_dma_chan, dma_buffer[flip], true);
+	dma_hw->ints0 = 1u << pwm_dma_chan;	
 
 #if defined ( PIN_DEBUG_BUSY )
-  gpio_put(PIN_DEBUG_BUSY, 1);
+	gpio_put(PIN_DEBUG_BUSY, 1);
 #endif
-  flip = !flip;
-  makeDmaBuffer(dma_buffer[flip], scanline);
-  if (++scanline >= NUM_LINES) {
-	scanline = 0;
-	drawcount++;
-  }
+	flip = !flip;
+	makeDmaBuffer(dma_buffer[flip], scanline);
+	if (++scanline >= NUM_LINES) {
+		scanline = 0;
+		drawcount++;
+	}
 #if defined ( PIN_DEBUG_BUSY )
-  gpio_put(PIN_DEBUG_BUSY, 0);
+	gpio_put(PIN_DEBUG_BUSY, 0);
 #endif
 }
 
@@ -214,51 +214,51 @@ void rp2040_pwm_ntsc_init(void)
 	gpio_init(PIN_DEBUG_BUSY);
 	gpio_set_dir(PIN_DEBUG_BUSY, GPIO_OUT);
 #endif
-  init_palette();
-  g_clearscreen();
-  clearscreen();
+	init_palette();
+	g_clearscreen();
+	clearscreen();
 
-  // CPUを157.5MHzで動作させる
-  uint32_t freq_khz = 157500;
+	// CPUを157.5MHzで動作させる
+	uint32_t freq_khz = 157500;
 
-  // PWM周期を11サイクルとする (157.5 [MHz] / 11 = 14318181 [Hz])
-  uint32_t pwm_div = 11;
+	// PWM周期を11サイクルとする (157.5 [MHz] / 11 = 14318181 [Hz])
+	uint32_t pwm_div = 11;
 
-  // ※ NTSCのカラー信号を1周期4サンプルで出力する。
-  // 出力されるカラーバースト信号は  14318181 [Hz] / 4 = 3579545 [Hz] となる。
+	// ※ NTSCのカラー信号を1周期4サンプルで出力する。
+	// 出力されるカラーバースト信号は  14318181 [Hz] / 4 = 3579545 [Hz] となる。
 
-  set_sys_clock_khz(freq_khz, true);
+	set_sys_clock_khz(freq_khz, true);
 
-  gpio_set_function(PIN_OUTPUT, GPIO_FUNC_PWM);
-  uint pwm_slice_num = pwm_gpio_to_slice_num(PIN_OUTPUT);
+	gpio_set_function(PIN_OUTPUT, GPIO_FUNC_PWM);
+	uint pwm_slice_num = pwm_gpio_to_slice_num(PIN_OUTPUT);
 
-  pwm_config config = pwm_get_default_config();
-  pwm_config_set_clkdiv(&config, 1);
+	pwm_config config = pwm_get_default_config();
+	pwm_config_set_clkdiv(&config, 1);
 
-  pwm_init(pwm_slice_num, &config, true);
-  pwm_set_wrap(pwm_slice_num, pwm_div - 1);
+	pwm_init(pwm_slice_num, &config, true);
+	pwm_set_wrap(pwm_slice_num, pwm_div - 1);
 
-  pwm_dma_chan = dma_claim_unused_channel(true);
-  dma_channel_config pwm_dma_chan_config = dma_channel_get_default_config(pwm_dma_chan);
-  channel_config_set_transfer_data_size(&pwm_dma_chan_config, DMA_SIZE_16);
-  channel_config_set_read_increment(&pwm_dma_chan_config, true);
-  channel_config_set_write_increment(&pwm_dma_chan_config, false);
-  channel_config_set_dreq(&pwm_dma_chan_config, DREQ_PWM_WRAP0 + pwm_slice_num);
+	pwm_dma_chan = dma_claim_unused_channel(true);
+	dma_channel_config pwm_dma_chan_config = dma_channel_get_default_config(pwm_dma_chan);
+	channel_config_set_transfer_data_size(&pwm_dma_chan_config, DMA_SIZE_16);
+	channel_config_set_read_increment(&pwm_dma_chan_config, true);
+	channel_config_set_write_increment(&pwm_dma_chan_config, false);
+	channel_config_set_dreq(&pwm_dma_chan_config, DREQ_PWM_WRAP0 + pwm_slice_num);
 
-  volatile void* wr_addr = &pwm_hw->slice[pwm_slice_num].cc;
-  wr_addr = (volatile void*)(((uintptr_t)wr_addr) + 2);
+	volatile void* wr_addr = &pwm_hw->slice[pwm_slice_num].cc;
+	wr_addr = (volatile void*)(((uintptr_t)wr_addr) + 2);
 
-  makeDmaBuffer(dma_buffer[0], 0);
+	makeDmaBuffer(dma_buffer[0], 0);
 
-  dma_channel_configure(
-	  pwm_dma_chan,
-	  &pwm_dma_chan_config,
-	  wr_addr,
-	  dma_buffer[0],
-	  NUM_LINE_SAMPLES,
-	  true
-  );
-  dma_channel_set_irq0_enabled(pwm_dma_chan, true);
-  irq_set_exclusive_handler(DMA_IRQ_0, irq_handler);
-  irq_set_enabled(DMA_IRQ_0, true);
+	dma_channel_configure(
+		pwm_dma_chan,
+		&pwm_dma_chan_config,
+		wr_addr,
+		dma_buffer[0],
+		NUM_LINE_SAMPLES,
+		true
+	);
+	dma_channel_set_irq0_enabled(pwm_dma_chan, true);
+	irq_set_exclusive_handler(DMA_IRQ_0, irq_handler);
+	irq_set_enabled(DMA_IRQ_0, true);
 }
