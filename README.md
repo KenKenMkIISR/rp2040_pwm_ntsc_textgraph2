@@ -15,4 +15,4 @@ GP19 -- 75 ohm --- Video Out
 　　　　　　　GND  
   
 ![](picture1.jpg)  
-![](picture2.jpg)  
+![](raytrace.jpg)  

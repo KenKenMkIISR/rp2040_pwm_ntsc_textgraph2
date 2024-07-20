@@ -15,6 +15,7 @@ add_executable(rp2040_pwm_ntsc
 	rp2040_pwm_ntsc_textgraph.c
 	text_graph_library.c
 	fontdata.c
+	raytrace.c
 )
 
 # Pull in basic dependencies
