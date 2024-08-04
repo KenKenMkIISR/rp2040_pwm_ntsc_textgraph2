@@ -23,9 +23,9 @@ caused by using this program.
 // x,yにカラー番号cのドットを描画
 void g_pset(int x, int y, int c)
 {
-	if((unsigned int)x>=FRAME_WIDTH) return;
-	if((unsigned int)y>=FRAME_HEIGHT) return;
-	GVRAM[y*FRAME_WIDTH+x]=c;
+	if((unsigned int)x>=X_RES) return;
+	if((unsigned int)y>=Y_RES) return;
+	GVRAM[y*X_RES+x]=c;
 }
 
 // 横m*縦nドットのキャラクターを座標x,yに表示
@@ -265,7 +265,7 @@ void g_putfont(int x,int y,unsigned int c,int bc,unsigned char n)
 	unsigned int d1,mask;
 	unsigned short *ad;
 
-	p=FontData+n*8;
+	p=Fontp+n*8;
 	for(i=0;i<8;i++){
 		d=*p++;
 		for(j=0;j<8;j++){
@@ -332,25 +332,40 @@ unsigned char *cursor=TVRAM;
 unsigned char cursorcolor=7;
 
 void vramscroll(void){
-	unsigned char *p1,*p2,*vramend;
+	unsigned int *p1,*p2;
+	unsigned short *hp1,*hp2;
 
-	vramend=TVRAM+WIDTH_X*WIDTH_Y;
-	p1=TVRAM;
-	p2=p1+WIDTH_X;
-	while(p2<vramend){
-		*(p1+ATTROFFSET)=*(p2+ATTROFFSET);
-		*p1++=*p2++;
+	if(twidth%4==0){
+		p1=(unsigned int *)TVRAM;
+		p2=(unsigned int *)(TVRAM+twidth);
+		while(p2<(unsigned int *)(TVRAM+attroffset)){
+			*(p1+attroffset/4)=*(p2+attroffset/4);
+			*p1++=*p2++;
+		}
+		while(p1<(unsigned int *)(TVRAM+attroffset)){
+			*(p1+attroffset/4)=0;
+			*p1++=0;
+		}
 	}
-	while(p1<vramend){
-		*(p1+ATTROFFSET)=0;
-		*p1++=0;
+	else{
+		hp1=(unsigned short *)TVRAM;
+		hp2=(unsigned short *)(TVRAM+twidth);
+		while(hp2<(unsigned short *)(TVRAM+attroffset)){
+			*(hp1+attroffset/2)=*(hp2+attroffset/2);
+			*hp1++=*hp2++;
+		}
+		while(hp1<(unsigned short *)(TVRAM+attroffset)){
+			*(hp1+attroffset/2)=0;
+			*hp1++=0;
+		}
 	}
 }
 
 //カーソルを座標(x,y)にカラー番号cに設定
 void setcursor(unsigned char x,unsigned char y,unsigned char c){
-	if(x>=WIDTH_X || y>=WIDTH_Y) return;
-	cursor=TVRAM+y*WIDTH_X+x;
+	//カーソルを座標(x,y)にカラー番号cに設定
+	if(x>=twidth || y>=WIDTH_Y) return;
+	cursor=TVRAM+y*twidth+x;
 	cursorcolor=c;
 }
 
@@ -362,20 +377,20 @@ void setcursorcolor(unsigned char c){
 //カーソル位置にテキストコードnを1文字表示し、カーソルを1文字進める
 //画面最終文字表示してもスクロールせず、次の文字表示時にスクロールする
 void printchar(unsigned char n){
-	if(cursor<TVRAM || cursor>TVRAM+WIDTH_X*WIDTH_Y) return;
-	if(cursor==TVRAM+WIDTH_X*WIDTH_Y){
+	if(cursor<TVRAM || cursor>TVRAM+twidth*WIDTH_Y) return;
+	if(cursor==TVRAM+twidth*WIDTH_Y){
 		vramscroll();
-		cursor-=WIDTH_X;
+		cursor=TVRAM+twidth*(WIDTH_Y-1);
 	}
 	if(n=='\n'){
 		//改行
-		cursor+=WIDTH_X-((cursor-TVRAM)%WIDTH_X);
+		cursor+=twidth-((cursor-TVRAM)%twidth);
 	} else if(n==0x08){
 		//BS
 		if (TVRAM<cursor) cursor--;
 	} else{
 		*cursor=n;
-		*(cursor+ATTROFFSET)=cursorcolor;
+		*(cursor+attroffset)=cursorcolor;
 		cursor++;
 	}
 }
@@ -426,4 +441,20 @@ void printnum2(unsigned int n,unsigned char e){
 void cls(void){
 	clearscreen();
 	cursor=TVRAM;
+}
+
+// RAMフォント（PCG）の利用開始
+// p：RAMフォントの格納アドレス（8*256＝2048バイト）
+// a： システムフォントからのコピー指定。0の場合コピーなし、0以外でコピー
+void startPCG(unsigned char *p,int a){
+	int i;
+	if(a){
+		for(i=0;i<8*256;i++) *p++=FontData[i];
+		Fontp=p-8*256;
+	}
+	else Fontp=p;
+}
+void stopPCG(void){
+// RAMフォント（PCG）の利用停止
+	Fontp=FontData;
 }

@@ -21,6 +21,7 @@ void printstr(unsigned char *s);
 void printnum(unsigned int n);
 void printnum2(unsigned int n,unsigned char e);
 void cls(void);
+void startPCG(unsigned char *p,int a);
 
 extern const unsigned char FontData[];
 extern uint8_t *cursor;
